@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Kidstall Web - AI Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+    <div id="app" class="flex h-screen">
+        <!-- Sidebar สำหรับ Chat -->
+        <div class="w-80 border-r border-gray-700 p-6 flex flex-col">
+            <h1 class="text-2xl font-bold text-blue-500 mb-6">KW Builder</h1>
+            <div id="chat-history" class="flex-1 overflow-y-auto mb-4 text-sm text-gray-400">
+                ยินดีต้อนรับ! พิมพ์บอกสไตล์เว็บที่ต้องการได้เลยครับ
+            </div>
+            <textarea id="user-input" class="w-full p-2 bg-gray-800 border border-gray-600 rounded" placeholder="เช่น ร้านกาแฟโทนอุ่น"></textarea>
+            <button onclick="buildSite()" class="mt-2 bg-blue-600 p-2 rounded font-bold">สร้างเว็บด้วย AI</button>
+        </div>
+        <!-- Preview Window -->
+        <div class="flex-1 bg-white" id="preview-frame">
+            <div class="p-20 text-center text-gray-500">ตัวอย่างเว็บไซต์จะปรากฏที่นี่...</div>
+        </div>
+    </div>
+    <script>
+        async function buildSite() {
+            const prompt = document.getElementById('user-input').value;
+            // เชื่อมต่อไปยัง API ที่เราจะ Deploy ในข้อ 2
+            const res = await fetch('/api/generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ prompt })
+            });
+            const config = await res.json();
+            renderPreview(config);
+        }
+        function renderPreview(conf) {
+            document.getElementById('preview-frame').innerHTML = `
+                <div style="background:${conf.primaryColor}; padding:50px; text-align:center; color:white">
+                    <h1>${conf.title}</h1>
+                    <p>${conf.heroTitle}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
